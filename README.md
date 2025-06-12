@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# install
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+npm install zustand
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# First create a store
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Your store is a hook! You can put anything in it: primitives, objects, functions. The set function merges state.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```js
+import { create } from "zustand";
 
-## Learn More
+const useStore = create((set) => ({
+  bears: 0,
+  increasePopulation: () => set((state) => ({ bears: state.bears + 1 })),
+  removeAllBears: () => set({ bears: 0 }),
+  updateBears: (newBears) => set({ bears: newBears }),
+}));
+```
 
-To learn more about Next.js, take a look at the following resources:
+# Then bind your components, and that's it!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- You can use the hook anywhere, without the need of providers. Select your state and the consuming component will re-render when that state changes.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```js
+function BearCounter() {
+  const bears = useStore((state) => state.bears);
+  return <h1>{bears} bears around here...</h1>;
+}
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+function Controls() {
+  const increasePopulation = useStore((state) => state.increasePopulation);
+  return <button onClick={increasePopulation}>one up</button>;
+}
+```
